@@ -95,7 +95,7 @@ class StudentList(Resource):
         return {MSG: f"Student created with id: {student_id}"}, HTTPStatus.OK
 
 
-@api.route("/<email>")
+@api.route("/<string:email>")
 @api.param("email", "Student email to use for lookup")
 @api.response(
     HTTPStatus.NOT_FOUND,
@@ -155,3 +155,28 @@ class Student(Resource):
             return {MSG: "Student not found"}, HTTPStatus.NOT_FOUND
 
         return {MSG: "Student updated"}, HTTPStatus.OK
+
+    @api.doc("Delete a specific student, identified by email")
+    @api.response(
+        HTTPStatus.OK,
+        "Success",
+        api.model("Delete Student", {MSG: fields.String("Student deleted")}),
+    )
+    @api.response(
+        HTTPStatus.NOT_FOUND,
+        "Student Not Found",
+        api.model(
+            "Delete Student: Not Found",
+            {MSG: fields.String("Student not found")},
+        ),
+    )
+    def delete(self, email):
+        student_resource = StudentResource()
+        # Check if the student exists first
+        student = student_resource.get_student_by_email(email)
+        if student is None:
+            return {MSG: "Student not found"}, HTTPStatus.NOT_FOUND
+
+        student_resource.delete_student_by_email(email)
+        return {MSG: "Student deleted"}, HTTPStatus.OK
+

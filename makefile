@@ -40,7 +40,7 @@ tests: pytests
 dev_env:
 	if [ ! -d $(VENV_DIR) ]; then \
 		$(PYTHON_CREATE) -m venv $(VENV_DIR); \
-		pip install -r $(REQ_DIR)/requirements-dev.txt; \
+		$(VENV_DIR)/bin/pip install -r $(REQ_DIR)/requirements-dev.txt; \
 	fi; \
 	$(ACTIVATE)
 
